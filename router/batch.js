@@ -14,7 +14,7 @@ cloudinary.config({
 
 router.post('/create-batch', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const batchImg = await cloudinary.uploader.upload(req.files.batchImg.tempFilePath)
         const data = new batchSchema({
             batchName: req.body.batchName,
@@ -41,7 +41,7 @@ router.post('/create-batch', async (req, res) => {
 
 router.get('/get-all-batch', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const batchesData = await batchSchema.find({ _uid: verify._id })
         res.status(200).json({
             batches: batchesData
@@ -57,7 +57,7 @@ router.get('/get-all-batch', async (req, res) => {
 
 router.get('/get-batch-by-id/:_id', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const batchData = await batchSchema.findById({ _uid: verify._id, _id: req.params._id })
         res.status(200).json({
             batch: batchData
@@ -73,7 +73,7 @@ router.get('/get-batch-by-id/:_id', async (req, res) => {
 
 router.delete('/delete-batch/:_id', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const matchingId = await batchSchema.findById(req.params._id)
         if (verify._id != matchingId._uid) {
             res.status(401).json({
@@ -96,7 +96,7 @@ router.delete('/delete-batch/:_id', async (req, res) => {
 
 router.put('/update-batch/:_id', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const batchData = await batchSchema.findById(req.params._id)
         if (verify._id != batchData._uid) {
             res.status(401).json({

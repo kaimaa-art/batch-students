@@ -16,7 +16,7 @@ cloudinary.config({
 //---------------------------get all route-------------------------------------------
 router.get('/get-all', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const data = await ContactSchema.find({ _uid: verify._id })
         res.status(200).json({
             msg: data
@@ -31,7 +31,7 @@ router.get('/get-all', async (req, res) => {
 
 router.get('/getById/:_id', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const data = await ContactSchema.findOne({ _uid: verify._id, _id: req.params._id })
         res.status(200).json({
             contact: data
@@ -46,7 +46,7 @@ router.get('/getById/:_id', async (req, res) => {
 
 router.post('/post', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const image = await cloudinary.uploader.upload(req.files.photo.tempFilePath)
         const contactSchema = new ContactSchema({
             userName: req.body.userName,
@@ -78,7 +78,7 @@ router.post('/post', async (req, res) => {
 
 router.get("/get-all-by-batch/:batchName", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const data = await ContactSchema.find({ batchName: req.params.batchName, _uid: verify._id })
         res.status(200).json({
             batch_students: data
@@ -96,7 +96,7 @@ router.get("/get-all-by-batch/:batchName", async (req, res) => {
 
 router.delete("/delete-all-contact-by-batchName/:batchName", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const data = await ContactSchema.find({ batchName: req.params.batchName })
         if (!data.every(d => d._uid == verify._id)) {
             return res.status(409).json({
@@ -126,7 +126,7 @@ router.delete("/delete-all-contact-by-batchName/:batchName", async (req, res) =>
 
 router.delete("/delete/:id", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const data = await ContactSchema.find({ _id: req.params.id })
         if (data[0]._uid != verify._id) {
             return res.status(409).json({
@@ -151,7 +151,7 @@ router.delete("/delete/:id", async (req, res) => {
 
 router.put('/update/:_id', async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRATE_KEY)
+        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
         const data = await ContactSchema.findOne({ _id: req.params._id })
         if (data._uid != verify._id) {
             return res.status(409).json({
