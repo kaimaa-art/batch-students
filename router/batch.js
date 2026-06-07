@@ -1,21 +1,226 @@
-const express = require('express')
-const router = express.Router()
-const batchSchema = require('../model/batch')
-const jwt = require('jsonwebtoken')
-const cloudinary = require('cloudinary').v2
+// const express = require('express')
+// const router = express.Router()
+// const batchSchema = require('../model/batch')
+// const jwt = require('jsonwebtoken')
+// const cloudinary = require('cloudinary').v2
 
-require('dotenv').config
+// require('dotenv').config
+
+// cloudinary.config({
+//     cloud_name: process.env.CLOUD_NAME,
+//     api_key: process.env.API_KEY,
+//     api_secret: process.env.API_SECRET
+// })
+
+// router.post('/create-batch', async (req, res) => {
+//     try {
+//         const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
+//         const batchImg = await cloudinary.uploader.upload(req.files.batchImg.tempFilePath)
+//         const data = new batchSchema({
+//             batchName: req.body.batchName,
+//             duration: req.body.duration,
+//             startingDate: req.body.startingDate,
+//             courseFee: req.body.courseFee,
+//             description: req.body.description,
+//             _uid: verify._id,
+//             batchImgUrl: batchImg.secure_url,
+//             batchImgId: batchImg.public_id
+//         })
+//         const newData = await data.save()
+//         res.status(200).json({
+//             newData: newData
+//         })
+//     }
+//     catch (err) {
+//         console.log("error " + err)
+//         res.status(500).json({
+//             error: err
+//         })
+//     }
+// })
+
+// router.get('/get-all-batch', async (req, res) => {
+//     try {
+//         const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
+//         const batchesData = await batchSchema.find({ _uid: verify._id })
+//         res.status(200).json({
+//             batches: batchesData
+//         })
+//     }
+//     catch (err) {
+//         console.log("error " + err)
+//         res.status(500).json({
+//             error: err
+//         })
+//     }
+// })
+
+// router.get('/get-batch-by-id/:_id', async (req, res) => {
+//     try {
+//         const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
+//         const batchData = await batchSchema.findById({ _uid: verify._id, _id: req.params._id })
+//         res.status(200).json({
+//             batch: batchData
+//         })
+//     }
+//     catch (err) {
+//         console.log("eror " + err)
+//         res.status(500).json({
+//             error: err
+//         })
+//     }
+// })
+
+// router.delete('/delete-batch/:_id', async (req, res) => {
+//     try {
+//         const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
+//         const matchingId = await batchSchema.findById(req.params._id)
+//         if (verify._id != matchingId._uid) {
+//             res.status(401).json({
+//                 error: "invalid request"
+//             })
+//         }
+//         await cloudinary.uploader.destroy(matchingId.batchImgId)
+//         await batchSchema.findByIdAndDelete(req.params._id)
+//         res.status(200).json({
+//             msg: "data deleted"
+//         })
+//     }
+//     catch (err) {
+//         console.log("error " + err)
+//         res.status(500).json({
+//             error: err
+//         })
+//     }
+// })
+
+// router.put('/update-batch/:_id', async (req, res) => {
+//     try {
+//         const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
+//         const batchData = await batchSchema.findById(req.params._id)
+//         if (verify._id != batchData._uid) {
+//             res.status(401).json({
+//                 error: "invalid request"
+//             })
+//         }
+//         if (req.files) {
+//             const deleteImg = await cloudinary.uploader.destroy(batchData.batchImgId)
+//             const newImg = await cloudinary.uploader.upload(req.files.batchImg.tempFilePath)
+//             const dataStruct = {
+//                 batchName: req.body.batchName,
+//                 startingDate: req.body.startingDate,
+//                 duration: req.body.duration,
+//                 courseFee: req.body.courseFee,
+//                 description: req.body.dercription,
+//                 batchImgUrl: newImg.secure_url,
+//                 batchImgId: newImg.public_id
+//             }
+//             const newData = await batchSchema.findByIdAndUpdate(req.params._id, dataStruct, { new: true })
+//             res.status(200).json({
+//                 newData: newData
+//             })
+//         }
+//         else {
+//             const dataStruct = {
+//                 batchName: req.body.batchName,
+//                 startingDate: req.body.startingDate,
+//                 duration: req.body.duration,
+//                 courseFee: req.body.courseFee,
+//                 description: req.body.dercription
+//             }
+//             const newData = await batchSchema.findByIdAndUpdate(req.params._id, dataStruct, { new: true })
+//             res.status(200).json({
+//                 newData: newData
+//             })
+//         }
+//     }
+//     catch (err) {
+//         console.log("error " + err)
+//         res.status(500).json({
+//             error: err
+//         })
+//     }
+// })
+
+
+
+
+
+
+// module.exports = router
+
+
+
+
+
+
+
+
+
+
+const express = require("express");
+const router = express.Router();
+const batchSchema = require("../model/batch");
+const jwt = require("jsonwebtoken");
+const cloudinary = require("cloudinary").v2;
+
+require("dotenv").config();
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET
-})
+    api_secret: process.env.API_SECRET,
+});
 
-router.post('/create-batch', async (req, res) => {
+/* ===========================
+   CREATE BATCH
+=========================== */
+
+router.get("/count", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
-        const batchImg = await cloudinary.uploader.upload(req.files.batchImg.tempFilePath)
+
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        const totalBatches =
+            await batchSchema.countDocuments({
+                _uid: verify._id
+            });
+
+        res.status(200).json({
+            totalBatches
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            msg: "Failed"
+        });
+    }
+});
+
+router.post("/create-batch", async (req, res) => {
+    try {
+
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        if (!req.files || !req.files.batchImg) {
+            return res.status(400).json({
+                success: false,
+                msg: "Batch image is required",
+            });
+        }
+
+        const batchImg =
+            await cloudinary.uploader.upload(
+                req.files.batchImg.tempFilePath
+            );
+
         const data = new batchSchema({
             batchName: req.body.batchName,
             duration: req.body.duration,
@@ -24,127 +229,232 @@ router.post('/create-batch', async (req, res) => {
             description: req.body.description,
             _uid: verify._id,
             batchImgUrl: batchImg.secure_url,
-            batchImgId: batchImg.public_id
-        })
-        const newData = await data.save()
-        res.status(200).json({
-            newData: newData
-        })
-    }
-    catch (err) {
-        console.log("error " + err)
-        res.status(500).json({
-            error: err
-        })
-    }
-})
+            batchImgId: batchImg.public_id,
+        });
 
-router.get('/get-all-batch', async (req, res) => {
+        const newData = await data.save();
+
+        return res.status(201).json({
+            success: true,
+            batch: newData,
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+            success: false,
+            msg: "Failed to create batch",
+        });
+    }
+});
+
+/* ===========================
+   GET ALL BATCHES
+=========================== */
+
+router.get("/get-all-batch", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
-        const batchesData = await batchSchema.find({ _uid: verify._id })
-        res.status(200).json({
-            batches: batchesData
-        })
-    }
-    catch (err) {
-        console.log("error " + err)
-        res.status(500).json({
-            error: err
-        })
-    }
-})
 
-router.get('/get-batch-by-id/:_id', async (req, res) => {
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        const batchesData =
+            await batchSchema.find({
+                _uid: verify._id,
+            });
+
+        return res.status(200).json({
+            success: true,
+            batches: batchesData,
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+            success: false,
+            msg: "Failed to fetch batches",
+        });
+    }
+});
+
+/* ===========================
+   GET BATCH BY ID
+=========================== */
+
+router.get("/get-batch-by-id/:_id", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
-        const batchData = await batchSchema.findById({ _uid: verify._id, _id: req.params._id })
-        res.status(200).json({
-            batch: batchData
-        })
-    }
-    catch (err) {
-        console.log("eror " + err)
-        res.status(500).json({
-            error: err
-        })
-    }
-})
 
-router.delete('/delete-batch/:_id', async (req, res) => {
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        const batchData =
+            await batchSchema.findOne({
+                _id: req.params._id,
+                _uid: verify._id,
+            });
+
+        return res.status(200).json({
+            success: true,
+            batch: batchData,
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+            success: false,
+            msg: "Failed to fetch batch",
+        });
+    }
+});
+
+/* ===========================
+   DELETE BATCH
+=========================== */
+
+router.delete("/delete-batch/:_id", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
-        const matchingId = await batchSchema.findById(req.params._id)
-        if (verify._id != matchingId._uid) {
-            res.status(401).json({
-                error: "invalid request"
-            })
-        }
-        await cloudinary.uploader.destroy(matchingId.batchImgId)
-        await batchSchema.findByIdAndDelete(req.params._id)
-        res.status(200).json({
-            msg: "data deleted"
-        })
-    }
-    catch (err) {
-        console.log("error " + err)
-        res.status(500).json({
-            error: err
-        })
-    }
-})
 
-router.put('/update-batch/:_id', async (req, res) => {
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        const batchData =
+            await batchSchema.findById(
+                req.params._id
+            );
+
+        if (!batchData) {
+            return res.status(404).json({
+                success: false,
+                msg: "Batch not found",
+            });
+        }
+
+        if (verify._id !== batchData._uid) {
+            return res.status(401).json({
+                success: false,
+                msg: "Invalid request",
+            });
+        }
+
+        await cloudinary.uploader.destroy(
+            batchData.batchImgId
+        );
+
+        await batchSchema.findByIdAndDelete(
+            req.params._id
+        );
+
+        return res.status(200).json({
+            success: true,
+            msg: "Batch deleted successfully",
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+            success: false,
+            msg: "Failed to delete batch",
+        });
+    }
+});
+
+/* ===========================
+   UPDATE BATCH
+=========================== */
+
+router.put("/update-batch/:_id", async (req, res) => {
     try {
-        const verify = await jwt.verify(req.headers.authorization.split(" ")[1], process.env.SECRET_KEY)
-        const batchData = await batchSchema.findById(req.params._id)
-        if (verify._id != batchData._uid) {
-            res.status(401).json({
-                error: "invalid request"
-            })
+
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        const batchData =
+            await batchSchema.findById(
+                req.params._id
+            );
+
+        if (!batchData) {
+            return res.status(404).json({
+                success: false,
+                msg: "Batch not found",
+            });
         }
-        if (req.files) {
-            const deleteImg = await cloudinary.uploader.destroy(batchData.batchImgId)
-            const newImg = await cloudinary.uploader.upload(req.files.batchImg.tempFilePath)
-            const dataStruct = {
-                batchName: req.body.batchName,
-                startingDate: req.body.startingDate,
-                duration: req.body.duration,
-                courseFee: req.body.courseFee,
-                description: req.body.dercription,
-                batchImgUrl: newImg.secure_url,
-                batchImgId: newImg.public_id
-            }
-            const newData = await batchSchema.findByIdAndUpdate(req.params._id, dataStruct, { new: true })
-            res.status(200).json({
-                newData: newData
-            })
+
+        if (verify._id !== batchData._uid) {
+            return res.status(401).json({
+                success: false,
+                msg: "Invalid request",
+            });
         }
-        else {
-            const dataStruct = {
-                batchName: req.body.batchName,
-                startingDate: req.body.startingDate,
-                duration: req.body.duration,
-                courseFee: req.body.courseFee,
-                description: req.body.dercription
-            }
-            const newData = await batchSchema.findByIdAndUpdate(req.params._id, dataStruct, { new: true })
-            res.status(200).json({
-                newData: newData
-            })
+
+        const updateData = {
+            batchName: req.body.batchName,
+            duration: req.body.duration,
+            startingDate: req.body.startingDate,
+            courseFee: req.body.courseFee,
+            description: req.body.description,
+        };
+
+        if (
+            req.files &&
+            req.files.batchImg
+        ) {
+
+            await cloudinary.uploader.destroy(
+                batchData.batchImgId
+            );
+
+            const newImg =
+                await cloudinary.uploader.upload(
+                    req.files.batchImg.tempFilePath
+                );
+
+            updateData.batchImgUrl =
+                newImg.secure_url;
+
+            updateData.batchImgId =
+                newImg.public_id;
         }
+
+        const newData =
+            await batchSchema.findByIdAndUpdate(
+                req.params._id,
+                updateData,
+                {
+                    new: true,
+                }
+            );
+
+        return res.status(200).json({
+            success: true,
+            batch: newData,
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        return res.status(500).json({
+            success: false,
+            msg: "Failed to update batch",
+        });
     }
-    catch (err) {
-        console.log("error " + err)
-        res.status(500).json({
-            error: err
-        })
-    }
-})
+});
 
-
-
-
-
-
-module.exports = router
+module.exports = router;
