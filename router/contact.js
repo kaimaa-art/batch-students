@@ -704,7 +704,8 @@ router.get("/monthly-admissions", async (req, res) => {
         const data = await ContactSchema.aggregate([
             {
                 $match: {
-                    _uid: verify._id
+                    _uid: verify._id,
+                    createdAt: { $exists: true }
                 }
             },
             {
