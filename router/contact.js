@@ -693,4 +693,52 @@ router.get("/students-per-batch", async (req, res) => {
     }
 });
 
+router.get("/monthly-admissions", async (req, res) => {
+    try {
+
+        const verify = jwt.verify(
+            req.headers.authorization.split(" ")[1],
+            process.env.JWT_SECRET
+        );
+
+        const data = await ContactSchema.aggregate([
+            {
+                $match: {
+                    _uid: verify._id
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        month: {
+                            $month: "$createdAt"
+                        }
+                    },
+                    students: {
+                        $sum: 1
+                    }
+                }
+            },
+            {
+                $sort: {
+                    "_id.month": 1
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            chartData: data
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).json({
+            msg: "Failed"
+        });
+
+    }
+});
+
 module.exports = router;
