@@ -672,12 +672,22 @@ router.get("/students-per-batch", async (req, res) => {
             chartData: data
         });
 
-    } catch (err) {
+        // } catch (err) {
+
+        //     console.log(err);
+
+        //     res.status(500).json({
+        //         msg: "Failed"
+        //     });
+
+        // }
+    }
+    catch (err) {
 
         console.log(err);
 
-        res.status(500).json({
-            msg: "Failed"
+        return res.status(500).json({
+            error: err.message
         });
 
     }
